@@ -13,7 +13,7 @@ import _thread
 import pygetwindow as gw
 import psutil
 import easygui
-
+import json
 #获取本地运行路径
 bin_dir = os.path.join(os.path.dirname(__file__),'bin')
 #点名文件目录
@@ -21,7 +21,7 @@ bin_dir = os.path.join(os.path.dirname(__file__),'bin')
 name_file = os.getcwd() + r'/name.wow'
 name_list = []
 counted_list = []
-
+config_file = os.getcwd() + r'/config.json'
 #判断启动模式
 quiet_boot = False
 client_mode = False
@@ -36,25 +36,47 @@ try:
 except:
     quiet_boot = False
     client_mode = False
-#防止多开
-def is_program_running(program_name):
-    
-    for process in psutil.process_iter(['name']):
-        print(process)
-        if process.info['name'] == program_name:
-            return True
-        return False
 
-print('当前文件名',os.path.basename(__file__))
-if is_program_running('随机点名.exe'):
-    print('程序已在运行，将不启动')
-    easygui.msgbox('已有一个实例正在运行，将不会启动当前实例\n 程序将退出',title='实例正在运行')
+#检查文件是否存在，若存在，则返回真，否则返回否
+def checkfile(path): 
+    global mode
 
-    os._exit(0)
+    if os.path.exists(path):
+        mode  = 'r'
+        return(True)
+    else:
+        mode = 'w+'
+        return(False)
 
-else:
-    print('程序未运行')
+#自己配置文件实现
+try:
+    if checkfile(config_file):
+        with open(config_file,mode='r',encoding='utf-8') as f:
+            config_content = f.read()
+        config = json.loads(config_content)
 
+        last_pid = config['last_pid']
+
+        if psutil.pid_exists(int(last_pid)):
+            easygui.msgbox('检测到已有开启的实例，PID：'+str(last_pid)+'，\n程序即将退出','随机点名-不能重复启动实例','退出')
+            os._exit(0)
+        else:
+            config['last_pid'] = os.getpid()
+            with open(config_file,mode='w',encoding='utf-8') as f:
+                f.write(json.dumps(config))
+                f.close()
+
+    else:
+        #获取当前的PID：
+        now_pid = os.getpid()
+        with open(config_file,mode='w',encoding='utf-8') as f:
+            config = {
+                'last_pid' : now_pid
+            }
+            f.write(json.dumps(config))
+            f.close()
+except Exception as q:
+    print(q)
 #基础变量
 click_time = 0 #按下时间计时器
 click_status = False  #按下状态计时器
@@ -100,10 +122,10 @@ class FloatingBall(QMainWindow):
         self.mouse_press_position = None
 
 
-        self.corner_radius = 10  # 圆角半径
+        self.corner_radius = 12   # 圆角半径
 
         # 加载图标
-        self.icon_pixmap = QPixmap(bin_dir + '/icon.ico').scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.icon_pixmap = QPixmap(bin_dir + '/icon_mini.png').scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
 
         # 设置悬浮球的样式（背景色通过paintEvent设置）
@@ -128,7 +150,7 @@ class FloatingBall(QMainWindow):
         painter.setRenderHint(QPainter.Antialiasing)
 
         # 设置背景色画笔和画刷
-        bg_brush = QBrush(QColor(255, 255, 255, 180))  # 白色背景，带透明度
+        bg_brush = QBrush(QColor(255, 255, 255, 220))  # 白色背景，带透明度
         painter.setBrush(bg_brush)
 
         # 绘制圆角方形背景
@@ -245,13 +267,20 @@ class MainWindow(QMainWindow):
         
         self.refresh_status()
         
-
+        if quiet_boot:
+            mWindow.hide()
+    
+    
 
     def StartButton_do(self):
         print('开始按钮被按下')
         if len(name_list) == 0:
             self.name_label.setText("文件为空")
         else:
+            #禁用按钮
+            self.Start_button.setEnabled(False)
+            self.Start_button.setText('正在抽取……')
+
             _thread.start_new_thread(self.choose_and_set_label,())
 
     def Open_File_button_do(self):
@@ -267,6 +296,11 @@ class MainWindow(QMainWindow):
         self.name_label.setText('未选定')
     
     def choose_and_set_label(self):
+        #禁用按钮
+        self.Start_button.setEnabled(False)
+        self.Start_button.setText('正在抽取……')
+
+
         global name_list
         global counted_list
         t = 0 
@@ -279,6 +313,11 @@ class MainWindow(QMainWindow):
         #移动最后的学生到点过列表:
         counted_list.append(name_list[ok])
         del name_list[ok]
+        
+        #启用按钮
+        
+        self.Start_button.setEnabled(True)
+        self.Start_button.setText('开始')
         
         #刷新显示
         self.refresh_status()

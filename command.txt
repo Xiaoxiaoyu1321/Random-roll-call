@@ -1,1 +1,1 @@
-pyinstaller -w -F --icon="./bin/icon.ico" --add-data bin:bin  --contents-directory . main_2.py
+pyinstaller -w -F --icon="./bin/icon.ico" --add-data bin:bin  --contents-directory . main.py
