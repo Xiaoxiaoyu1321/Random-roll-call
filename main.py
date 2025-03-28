@@ -113,7 +113,7 @@ class FloatingBall(QMainWindow):
         # 设置窗口的初始大小
 
         screen_geometry = QApplication.primaryScreen().geometry() #获取屏幕分辨率
-        self.setGeometry(screen_geometry.left() + 20, screen_geometry.bottom() - self.height() - 20, self.width(),
+        self.setGeometry(screen_geometry.left() + 30, screen_geometry.bottom() - self.height() - 55, self.width(),
                          self.height())
 
         # 初始化鼠标按下的位置
