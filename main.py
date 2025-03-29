@@ -1,7 +1,7 @@
 from pystray import Icon,Menu,MenuItem
 from PIL import Image
 #导入必须的库
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic,QtCore
 from PyQt5.QtGui import QFont ,QIcon, QPainter, QColor, QBrush, QPen,QPixmap
 from PyQt5.QtCore import  Qt, QRect, QPoint, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,QMainWindow,QMessageBox
@@ -398,6 +398,7 @@ if __name__ == "__main__":
     _thread.start_new_thread(main_time_remainder,())
     
     #PyQT 操作
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QtWidgets.QApplication(sys.argv)
     Float_Ball = FloatingBall()
     Float_Ball.show()

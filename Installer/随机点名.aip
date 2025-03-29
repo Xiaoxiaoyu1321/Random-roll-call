@@ -18,10 +18,10 @@
     <ROW Property="AiLicenseAgreementLink" Value="https://github.com/Xiaoxiaoyu1321/Random-roll-call" Type="4"/>
     <ROW Property="IAgree" Value="No" Type="4"/>
     <ROW Property="Manufacturer" Value="Xiaoxiaoyu1321"/>
-    <ROW Property="ProductCode" Value="1033:{7FAC064D-35BD-49FB-8101-F2E52E13A839} 2052:{7FAC064D-35BD-49FB-8101-F2E52E13A839} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{AB98C7B6-DA87-4ED0-A0A1-F1C6187F36A5} 2052:{AB98C7B6-DA87-4ED0-A0A1-F1C6187F36A5} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="随机点名"/>
-    <ROW Property="ProductVersion" Value="2.2.3" Options="32"/>
+    <ROW Property="ProductVersion" Value="2.2.4" Options="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{3FC64D7B-E7EF-49DA-BD7D-88CC3CEF9C84}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -53,9 +53,9 @@
     <ROW Component="AI_ExePath" ComponentId="{E7548F2E-67EB-43EB-927D-907BAF303657}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
     <ROW Component="APPDIR" ComponentId="{6BD6F46E-4B44-4246-965A-253D69E21B05}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="ProductInformation" ComponentId="{4C5EB23C-4E39-43D1-982C-67F699E053A0}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
-    <ROW Component="Randomrollcall_2.2.3.exe" ComponentId="{03F8985C-1989-442E-A11C-8A7AAF83DD4C}" Directory_="APPDIR" Attributes="256" KeyPath="Randomrollcall_2.2.3.exe"/>
     <ROW Component="_" ComponentId="{BA263D37-3172-4EF8-A69F-F4965D6029BB}" Directory_="__Dir" Attributes="0"/>
-    <ROW Component="name.wow" ComponentId="{547C23CD-8E3A-4370-832F-8C27152B7583}" Directory_="APPDIR" Attributes="0" KeyPath="name.wow" Type="0"/>
+    <ROW Component="main.exe" ComponentId="{778C9322-81B8-4791-86AC-C33F4535E0BA}" Directory_="APPDIR" Attributes="256" KeyPath="main.exe"/>
+    <ROW Component="name.wow" ComponentId="{E2372A44-2DE2-4C12-9B4B-08C89124E455}" Directory_="APPDIR" Attributes="128" KeyPath="name.wow"/>
     <ROW Component="plusmode.bat" ComponentId="{3BC43470-FB27-4F5E-979A-2F3AD19FCE6B}" Directory_="APPDIR" Attributes="0" KeyPath="plusmode.bat"/>
     <ROW Component="regid.199509.com.example" ComponentId="{CA16C866-B476-4730-893A-D5308FB5E657}" Directory_="regid.199509.com.example_Dir" Attributes="0"/>
     <ROW Component="start.bat" ComponentId="{A4AAEDDF-F62E-421C-BD84-299EEE406369}" Directory_="APPDIR" Attributes="0" KeyPath="start.bat"/>
@@ -67,14 +67,12 @@
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="Randomrollcall_2.2.3.exe" Component_="Randomrollcall_2.2.3.exe" FileName="RANDOM~1.EXE|Random-roll-call_2.2.3.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\dist\Random-roll-call_2.2.3.exe" SelfReg="false" DigSign="true"/>
     <ROW File="start.bat" Component_="start.bat" FileName="start.bat" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\dist\start.bat" SelfReg="false"/>
     <ROW File="plusmode.bat" Component_="plusmode.bat" FileName="PLUS-M~1.BAT|plus-mode.bat" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\dist\plus-mode.bat" SelfReg="false"/>
     <ROW File="name.wow" Component_="name.wow" FileName="name.wow" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\dist\name.wow" SelfReg="false"/>
+    <ROW File="main.exe" Component_="main.exe" FileName="main.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\dist\main.exe" SelfReg="false" DigSign="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
-    <ROW MsiShortcutProperty="Randomrollcall_2.2.30" Shortcut_="Randomrollcall_2.2.3" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
-    <ROW MsiShortcutProperty="Randomrollcall_2.2.3_10" Shortcut_="Randomrollcall_2.2.3_1" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
     <ROW MsiShortcutProperty="plusmode0" Shortcut_="plusmode" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
     <ROW MsiShortcutProperty="plusmode_10" Shortcut_="plusmode_1" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
     <ROW MsiShortcutProperty="start0" Shortcut_="start" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
@@ -205,6 +203,7 @@
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH" Target="[AI_SETUPEXEPATH_ORIGINAL]"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
+    <ROW Action="AI_ResolveLocalizedCredentials" Type="1" Source="aicustact.dll" Target="GetLocalizedCredentials"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="AI_UnpinFromStartScreen" Type="1025" Source="ShortcutFlags.dll" Target="UnpinFromStartScreen" WithoutSeq="true"/>
@@ -224,12 +223,12 @@
     <ROW Feature_="MainFeature" Component_="APPDIR"/>
     <ROW Feature_="MainFeature" Component_="ProductInformation"/>
     <ROW Feature_="MainFeature" Component_="AI_ExePath"/>
-    <ROW Feature_="MainFeature" Component_="Randomrollcall_2.2.3.exe"/>
     <ROW Feature_="MainFeature" Component_="regid.199509.com.example"/>
     <ROW Feature_="__1" Component_="plusmode.bat"/>
     <ROW Feature_="MainFeature" Component_="_"/>
     <ROW Feature_="_" Component_="start.bat"/>
     <ROW Feature_="MainFeature" Component_="name.wow"/>
+    <ROW Feature_="MainFeature" Component_="main.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="icon.exe" SourcePath="..\bin\icon.ico" Index="0"/>
@@ -239,8 +238,8 @@
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
     <ROW Action="AI_STORE_LOCATION" Condition="(Not Installed) OR REINSTALL" Sequence="1501"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1397"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
-    <ROW Action="AI_EnableDebugLog" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
+    <ROW Action="AI_EnableDebugLog" Sequence="52"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="102" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
@@ -260,16 +259,20 @@
     <ROW Action="AI_DATA_SETTER_1" Condition="(REMOVE &lt;&gt; &quot;ALL&quot;)" Sequence="5101"/>
     <ROW Action="AI_XmlUninstall" Condition="(REMOVE)" Sequence="3102"/>
     <ROW Action="AI_DATA_SETTER_2" Condition="(REMOVE)" Sequence="3101"/>
+    <ROW Action="AI_DETECT_MODERNWIN" Condition="(VersionNT &gt;= 603)" Sequence="54" MsiKey="AI_DETECT_MODERNWIN"/>
+    <ROW Action="AI_DETECT_WINTHEME" Condition="(VersionNT &gt;= 603)" Sequence="55" MsiKey="AI_DETECT_WINTHEME"/>
+    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_PRESERVE_INSTALL_TYPE" Sequence="199"/>
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
-    <ROW Action="AI_DpiContentScale" Sequence="52"/>
-    <ROW Action="AI_EnableDebugLog" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="54"/>
+    <ROW Action="AI_DpiContentScale" Sequence="53"/>
+    <ROW Action="AI_EnableDebugLog" Sequence="52"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="102"/>
     <ROW Action="AI_DetectSoftware" Sequence="101"/>
+    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="((VersionNT &lt;&gt; 501) AND (VersionNT &lt;&gt; 502))" Description="[ProductName] 无法安装在 [WindowsTypeNT5XDisplay]." DescriptionLocId="AI.LaunchCondition.NoNT5X" IsPredefined="true" Builds="DefaultBuild"/>
@@ -280,6 +283,9 @@
     <ROW Condition="SETUPEXEDIR OR (REMOVE=&quot;ALL&quot;)" Description="此安装包只能从引导程序运行。" DescriptionLocId="AI.LaunchCondition.RequireBootstrapper" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionMsi &gt;= AI_REQUIRED_WINDOWS_INSTALLER_VERSION" Description="[ProductName] 无法安装在 Windows Installer 版本低于 [AI_REQUIRED_WINDOWS_INSTALLER_DISPLAY] 的系统上。" DescriptionLocId="AI.LaunchCondition.WI" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] 无法安装在 [WindowsType9XDisplay]." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiLockPermComponent">
+    <ROW LockObject="APPDIR" Table="CreateFolder" User="[GRP_EVERYONE]" Permission="2032127" Flags="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegLocatorComponent">
     <ROW Signature_="AI_EXE_PATH_CU" Root="1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Type="2"/>
@@ -299,10 +305,10 @@
     <ROW Registry="Version" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
-    <ROW Shortcut="Randomrollcall_2.2.3" Directory_="DesktopFolder" Name="随机点名V2~1.3|随机点名 v2.2.3" Component_="Randomrollcall_2.2.3.exe" Target="[#Randomrollcall_2.2.3.exe]" Arguments="-client" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
-    <ROW Shortcut="Randomrollcall_2.2.3_1" Directory_="__Dir" Name="随机点名V2~1.3|随机点名 v2.2.3" Component_="Randomrollcall_2.2.3.exe" Target="[#Randomrollcall_2.2.3.exe]" Arguments="-client" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
-    <ROW Shortcut="plusmode" Directory_="__Dir" Name="随机点名V2~1.3-高|随机点名 v2.2.3 - 高级模式" Component_="plusmode.bat" Target="[#plusmode.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR" CustomFlags="1"/>
-    <ROW Shortcut="plusmode_1" Directory_="DesktopFolder" Name="随机点名V2~1.3-高|随机点名 v2.2.3 - 高级模式" Component_="plusmode.bat" Target="[#plusmode.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR" CustomFlags="1"/>
+    <ROW Shortcut="main" Directory_="__Dir" Name="随机点名-用~1|随机点名 - 用户模式" Component_="main.exe" Target="[#main.exe]" Arguments="-client" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="main_1" Directory_="DesktopFolder" Name="随机点名" Component_="main.exe" Target="[#main.exe]" Arguments="-client" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="plusmode" Directory_="__Dir" Name="随机点名-高~1|随机点名 - 高级模式" Component_="plusmode.bat" Target="[#plusmode.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR" CustomFlags="1"/>
+    <ROW Shortcut="plusmode_1" Directory_="DesktopFolder" Name="随机点名-高~1|随机点名 - 高级模式" Component_="plusmode.bat" Target="[#plusmode.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR" CustomFlags="1"/>
     <ROW Shortcut="start" Directory_="StartupFolder" Name="随机点名-开~1|随机点名-开机启动项" Component_="start.bat" Target="[#start.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
@@ -323,7 +329,7 @@
     <ROW XmlAttribute="xsischemaLocation" XmlElement="swidsoftware_identification_tag" Name="xsi:schemaLocation" Flags="14" Order="3" Value="http://standards.iso.org/iso/19770/-2/2008/schema.xsd software_identification_tag.xsd"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.XmlElementComponent">
-    <ROW XmlElement="swidbuild" ParentElement="swidnumeric" Name="swid:build" Condition="1" Order="2" Flags="14" Text="3" UpdateIndexInParent="0"/>
+    <ROW XmlElement="swidbuild" ParentElement="swidnumeric" Name="swid:build" Condition="1" Order="2" Flags="14" Text="4" UpdateIndexInParent="0"/>
     <ROW XmlElement="swidentitlement_required_indicator" ParentElement="swidsoftware_identification_tag" Name="swid:entitlement_required_indicator" Condition="1" Order="0" Flags="14" Text="false" UpdateIndexInParent="0"/>
     <ROW XmlElement="swidmajor" ParentElement="swidnumeric" Name="swid:major" Condition="1" Order="0" Flags="14" Text="2" UpdateIndexInParent="0"/>
     <ROW XmlElement="swidminor" ParentElement="swidnumeric" Name="swid:minor" Condition="1" Order="1" Flags="14" Text="2" UpdateIndexInParent="0"/>
