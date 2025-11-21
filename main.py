@@ -4,7 +4,9 @@ from PIL import Image
 from PyQt5 import QtWidgets, uic,QtCore
 from PyQt5.QtGui import QFont ,QIcon, QPainter, QColor, QBrush, QPen,QPixmap
 from PyQt5.QtCore import  Qt, QRect, QPoint, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,QMainWindow,QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,QMainWindow,QMessageBox,QFrame,QHBoxLayout
+from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, setFont
+from qfluentwidgets import FluentIcon as FIF
 import sys
 import os
 import random
@@ -14,6 +16,7 @@ import pygetwindow as gw
 import psutil
 import easygui
 import json
+
 #获取本地运行路径
 bin_dir = os.path.join(os.path.dirname(__file__),'bin')
 #点名文件目录
@@ -89,9 +92,22 @@ def main_time_remainder():
         time.sleep(0.4)
 
 
+class Widget(QFrame): #我不知道这是什么东西，但是没有这个东西会无法运行
+
+    def __init__(self, text: str, parent=None):
+        super().__init__(parent=parent)
+        self.label = SubtitleLabel(text, self)
+        self.hBoxLayout = QHBoxLayout(self)
+
+        setFont(self.label, 24)
+        self.label.setAlignment(Qt.AlignCenter)
+        self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
+
+        # 必须给子界面设置全局唯一的对象名
+        self.setObjectName(text.replace(' ', '-'))
 
 
-class FloatingBall(QMainWindow):
+class FloatingBall(QMainWindow):  #浮动球
 
 
     def __init__(self):
@@ -188,6 +204,7 @@ class FloatingBall(QMainWindow):
         print(click_time)
         if click_time <= 0.5:
             print("开启窗口")
+            #！！！！开启窗口
             mWindow.hide()
             mWindow.show()
             mWindow.showNormal() 
@@ -196,7 +213,7 @@ class FloatingBall(QMainWindow):
 
         self.mouse_press_position = None
 
-class SEEWO_Tools():
+class SEEWO_Tools(): #SEEWO 用途相关工具（托盘工具、PPT检测[已弃用]）
     def __init__(self):
         self.FLOAT_KEEPOPEN = False
     def showIcon(self):
@@ -228,7 +245,10 @@ class SEEWO_Tools():
         mWindow.showNormal()
     
 
-class MainWindow(QMainWindow):
+
+
+
+class MainWindow(QMainWindow): #主功能实现窗口
     def __init__(self):
         super(MainWindow, self).__init__()
         #加载.ui 文件
@@ -269,8 +289,8 @@ class MainWindow(QMainWindow):
         
         if quiet_boot:
             mWindow.hide()
-    
-    
+        
+        
 
     def StartButton_do(self):
         print('开始按钮被按下')
@@ -323,7 +343,7 @@ class MainWindow(QMainWindow):
         self.refresh_status()
             
     
-    def closeEvent(self, a0):
+    def closeEvent(self, a0): #处理关闭信号
         print('退出按钮被按下')
         #保存信息
         mWindow.hide()
@@ -339,8 +359,40 @@ class MainWindow(QMainWindow):
         Total_SB =str(len(name_list) + len(counted_list))
         self.status_label.setText(sb1 + Total_SB + sb2 + str(len(counted_list)) + sb3 + str(len(name_list)))
         random.shuffle(name_list)
-        
+class about(QWidget):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi(bin_dir + '/about.ui',self) 
 
+class WelcomeWindow(FluentWindow): #多合一窗口
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint) #禁用最大化按钮
+        #设置/固定宽度
+        #self.setFixedSize(self.width(), self.height()) #固定宽度和高度
+        self.setFixedSize(820, 530) 
+        self.setWindowIcon(QIcon(bin_dir + '/icon.ico'))
+        
+        
+        #添加 MainWindow 作为子窗口
+        self.homeInterface = MainWindow()
+        self.addSubInterface(self.homeInterface,icon=FIF.HOME,text='随机点名',position=NavigationItemPosition.TOP)
+
+        #添加 about 作为子窗口
+        self.homeInterface = about()
+        self.addSubInterface(self.homeInterface,icon=FIF.INFO,text='关于',position=NavigationItemPosition.TOP)
+    
+        #标题栏定制
+        self.titleBar.maxBtn.hide() #禁用最大化按钮
+        self.titleBar.setDoubleClickEnabled(False) #禁用双击最大化
+        self.setWindowTitle('随机点名')
+    def closeEvent(self, a0): #处理关闭信号
+        print('退出按钮被按下')
+        #保存信息
+        mWindow.hide()
+        SEEWO_Tool.showMessage('窗口已最小化到托盘')
+        a0.ignore()
+    
 
 
 def checkfile(path): #检查文件是否存在，若存在，则返回真，否则返回否
@@ -397,12 +449,17 @@ if __name__ == "__main__":
     #启动主计时器
     _thread.start_new_thread(main_time_remainder,())
     
+    
+
+
     #PyQT 操作
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QtWidgets.QApplication(sys.argv)
     Float_Ball = FloatingBall()
     Float_Ball.show()
-    mWindow = MainWindow()
+
+    #mWindow = MainWindow()
+    mWindow = WelcomeWindow()
     mWindow.show()
 
     #加载托盘

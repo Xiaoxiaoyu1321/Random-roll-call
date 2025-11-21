@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>766</width>
-    <height>482</height>
+    <height>483</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,23 +24,29 @@
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; font-style:italic;&quot;&gt;随机点名-V2.2.4&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;(编译日期 2025.03.29)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; font-style:italic;&quot;&gt;随机点名-V2.2.5&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;(编译日期 2025.11.21)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>340</y>
-      <width>210</width>
-      <height>17</height>
+      <x>240</x>
+      <y>336</y>
+      <width>281</width>
+      <height>21</height>
      </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
     </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;点击“开始”按钮开始随机点名&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
-   <widget class="QPushButton" name="Start_button">
+   <widget class="PushButton" name="Start_button">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -53,12 +59,12 @@
      <string>开始</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="OpenFile_button">
+   <widget class="PushButton" name="OpenFile_button">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>610</x>
       <y>440</y>
-      <width>121</width>
+      <width>141</width>
       <height>31</height>
      </rect>
     </property>
@@ -96,12 +102,12 @@
      <rect>
       <x>10</x>
       <y>450</y>
-      <width>391</width>
+      <width>131</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'思源黑体 CN Light','sans-serif';&quot;&gt;Copyright © 2019-2025 Xiaoxiaoyu1321.All rights reserved.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'思源黑体 CN Light','sans-serif';&quot;&gt;By Xiaoxiaoyu1321&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QLabel" name="status_label">
@@ -117,10 +123,10 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Reset_Button">
+   <widget class="PushButton" name="Reset_Button">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>530</x>
       <y>440</y>
       <width>75</width>
       <height>31</height>
@@ -132,6 +138,13 @@
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
