@@ -16,6 +16,8 @@ import pygetwindow as gw
 import psutil
 import easygui
 import json
+import secrets
+import numpy as np
 
 #获取本地运行路径
 bin_dir = os.path.join(os.path.dirname(__file__),'bin')
@@ -92,21 +94,14 @@ def main_time_remainder():
         time.sleep(0.4)
 
 
-class Widget(QFrame): #我不知道这是什么东西，但是没有这个东西会无法运行
+# 创建高质量随机数生成器实例
+rng = np.random.Generator(np.random.SFC64(seed=secrets.randbelow(2**64)))
 
-    def __init__(self, text: str, parent=None):
-        super().__init__(parent=parent)
-        self.label = SubtitleLabel(text, self)
-        self.hBoxLayout = QHBoxLayout(self)
-
-        setFont(self.label, 24)
-        self.label.setAlignment(Qt.AlignCenter)
-        self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
-
-        # 必须给子界面设置全局唯一的对象名
-        self.setObjectName(text.replace(' ', '-'))
-
-
+def advanced_shuffle(items):
+    """使用现代算法的高质量 shuffle"""
+    arr = np.array(items)
+    rng.shuffle(arr)
+    return arr.tolist()
 class FloatingBall(QMainWindow):  #浮动球
 
 
@@ -220,7 +215,7 @@ class SEEWO_Tools(): #SEEWO 用途相关工具（托盘工具、PPT检测[已弃
         self.icon = Icon("my_icon",title="随机点名")
 
         menu = Menu(
-            MenuItem('显示主界面',lambda:self.showWindow()),
+            MenuItem('显示主界面(可能会有问题)',lambda:self.showWindow()),
         MenuItem('退出程序',lambda:self.exitProgram())
         )
 
@@ -290,6 +285,8 @@ class MainWindow(QMainWindow): #主功能实现窗口
         if quiet_boot:
             mWindow.hide()
         
+
+        
         
 
     def StartButton_do(self):
@@ -320,7 +317,22 @@ class MainWindow(QMainWindow): #主功能实现窗口
         self.Start_button.setEnabled(False)
         self.Start_button.setText('正在抽取……')
 
-
+        #开始抽取
+        ok = self.get_list_new() #获取列表
+        for i in ok:
+            self.name_label.setText(i.replace('\n','').replace('\r',''))
+            time.sleep(0.1)
+        
+        #启用按钮
+        
+        self.Start_button.setEnabled(True)
+        self.Start_button.setText('开始')
+        
+        #刷新显示
+        print('开始刷新显示')
+        self.refresh_status()
+        print('线程应当退出')
+    def get_old(self): #旧的函数，用不到，但是还是想留着
         global name_list
         global counted_list
         t = 0 
@@ -333,16 +345,29 @@ class MainWindow(QMainWindow): #主功能实现窗口
         #移动最后的学生到点过列表:
         counted_list.append(name_list[ok])
         del name_list[ok]
+    def get_list_new(self):#取得新的列表
+        global name_list
+        global counted_list
         
-        #启用按钮
-        
-        self.Start_button.setEnabled(True)
-        self.Start_button.setText('开始')
-        
-        #刷新显示
-        self.refresh_status()
-            
-    
+        #random.shuffle(name_list)
+        name_list = advanced_shuffle(name_list)
+        final_list = []
+        need_count_num = random.randint(13,17)
+        if len(name_list) >= need_count_num:
+            print('人数大于',need_count_num,'，抽选')
+            for i in range(0,need_count_num):
+                final_list.append(name_list[i])
+                
+            print('结果',final_list)
+            counted_list.append(final_list[len(final_list)-1])
+            name_list.remove(final_list[len(final_list)-1])
+            print('抽到的',final_list[len(final_list)-1])
+            print('抽过的',counted_list)
+            print('没抽的',name_list)
+            return(final_list)
+        else:
+            print('人数小于',need_count_num,'，直接返回')
+            return(name_list)
     def closeEvent(self, a0): #处理关闭信号
         print('退出按钮被按下')
         #保存信息
@@ -358,7 +383,8 @@ class MainWindow(QMainWindow): #主功能实现窗口
         sb3 = ',剩余人数：'
         Total_SB =str(len(name_list) + len(counted_list))
         self.status_label.setText(sb1 + Total_SB + sb2 + str(len(counted_list)) + sb3 + str(len(name_list)))
-        random.shuffle(name_list)
+        #random.shuffle(name_list)
+        print('刷新结束')
 class about(QWidget):
     def __init__(self):
         super().__init__()
@@ -444,10 +470,12 @@ if __name__ == "__main__":
     
     #调用Reset_APP 方法重置应用程序
     reset_App()
-
-
+    
+   
+    
+    
     #启动主计时器
-    _thread.start_new_thread(main_time_remainder,())
+    #_thread.start_new_thread(main_time_remainder,())
     
     
 
