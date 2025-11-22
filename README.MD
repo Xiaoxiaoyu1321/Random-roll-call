@@ -14,6 +14,7 @@
 软件支持语言：zh-CN  
 ### 使用方法
 前往[Release](https://github.com/Xiaoxiaoyu1321/Random-roll-call/releases) 页面，下载最新的安装程序。
+国内建议[蓝奏云](https://xiaoxiaoyu1321.lanzouu.com/b0pn76zuh) **（密码3xw3）**
 
 您可以**先安装编辑功能**，在编辑后将"name.wow"文件 复制到其他没有安装编辑功能的电脑上。亦可以在同一台电脑上先安装编辑功能，**完成编辑后**，通过**控制面板的“修改” 移除编辑功能**。  
 
