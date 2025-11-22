@@ -359,6 +359,10 @@ class MainWindow(QMainWindow): #主功能实现窗口
                 final_list.append(name_list[i])
                 
             print('结果',final_list)
+            print('未偏移结果：',final_list[len(final_list)-1])
+            pianyi = random.randint(0,len(final_list)-1)
+            final_list.append(final_list[pianyi])
+            print('偏移量：',pianyi,'偏移后结果：',final_list[len(final_list)-1])
             counted_list.append(final_list[len(final_list)-1])
             name_list.remove(final_list[len(final_list)-1])
             print('抽到的',final_list[len(final_list)-1])
