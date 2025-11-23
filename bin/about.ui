@@ -30,13 +30,13 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>70</y>
+     <y>50</y>
      <width>211</width>
-     <height>41</height>
+     <height>71</height>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; font-weight:600;&quot;&gt;开发者：Xiaoxiaoyu1321&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; font-weight:600;&quot;&gt;版本：2.3.0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; font-weight:600;&quot;&gt;开发者：Xiaoxiaoyu1321&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="PushButton" name="pushButton">
@@ -62,7 +62,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>访问随机点名项目地址</string>
+    <string>访问随机点名开源项目地址</string>
    </property>
   </widget>
   <widget class="TextBrowser" name="textBrowser">
@@ -84,14 +84,19 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:16pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;本项目使用PyQT5 和 PyQT-Fluent-Widgets 项目组件提供用户交互界面支持。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;本项目使用 &lt;/span&gt;&lt;span style=&quot; font-family:'Monaspace Neon','ui-monospace','SFMono-Regular','SF Mono','Menlo','Consolas','Liberation Mono','monospace'; font-size:9pt; color:#1f2328; background-color:#ffffff;&quot;&gt; GNU GENERAL PUBLIC LICENSE 3.0&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;协议在Github 上开源。(我不想用这个协议，但因为库的遗传和合规性只能被动用这个）&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;这个软件的第一个版本发布于2024年11月3日。写这个软件的最大原因还是解决一直以来教学缺少合适和好用的本地的免登录的随机点名软件。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;最初开始做随机点名相关软件是在小学的时候，当初是使用的易语言开发的，只能实现一些不复杂的逻辑，而且说实话整体难度很低。这个项目也是我尝试将各个方面的技术整合在一起的最初实验产物，使用Python完成开发，因此我可以轻松实现一些更加复杂的逻辑。针对以往教学中观察到的问题，为此，我设计了一些相对实用的功能，例如“不重复点名”、“点名名单加密”。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;可以点上面的“访问作者站点”来看看我的个人站点，“访问随机点名项目地址”可以去本项目在Github 上开源的地址，可以检查和获取是否有新版本可用。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;【2.3.0版本新功能】&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1.重构随机数算法，改用SFC64生成器，操作系统提供的密码学安全种子，并具有随机偏移量，以确保尽可能极致的随机。&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2.重新构建GUI，整合编辑器到软件内&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;3.重新构建名单锁定方法&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;【关于本项目】&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;本项目使用PyQT5 和 PyQT-Fluent-Widgets 项目组件提供用户交互界面支持。&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;本项目使用 &lt;span style=&quot; font-family:'Monaspace Neon','ui-monospace','SFMono-Regular','SF Mono','Menlo','Consolas','Liberation Mono','monospace'; color:#1f2328; background-color:#ffffff;&quot;&gt; GNU GENERAL PUBLIC LICENSE 3.0 &lt;/span&gt;协议在 Github 上开源。(我不想用这个协议，但因为库的遗传和合规性只能被动用这个）&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;这个软件的第一个版本发布于2024年11月3日。写这个软件的最大原因还是解决一直以来教学缺少合适和好用的本地的免登录的随机点名软件。&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;最初开始做随机点名相关软件是在小学的时候，当初是使用的易语言开发的，只能实现一些不复杂的逻辑，而且说实话整体难度很低。这个项目也是我尝试将各个方面的技术整合在一起的最初实验产物，使用Python完成开发，因此我可以轻松实现一些更加复杂的逻辑。针对以往教学中观察到的问题，为此，我设计了一些相对实用的功能，例如“不重复点名”、“点名名单加密”。&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;可以点上面的“访问作者站点”来看看我的个人站点，“访问随机点名项目地址”可以去本项目在Github 上开源的地址，可以检查和获取是否有新版本可用。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

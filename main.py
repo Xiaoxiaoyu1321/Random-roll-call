@@ -4,8 +4,8 @@ from PIL import Image
 from PyQt5 import QtWidgets, uic,QtCore
 from PyQt5.QtGui import QFont ,QIcon, QPainter, QColor, QBrush, QPen,QPixmap
 from PyQt5.QtCore import  Qt, QRect, QPoint, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,QMainWindow,QMessageBox,QFrame,QHBoxLayout
-from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, setFont
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,QMainWindow,QMessageBox,QFrame,QHBoxLayout,QTextEdit,QLineEdit
+from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, setFont,Flyout,FlyoutAnimationType
 from qfluentwidgets import FluentIcon as FIF
 import sys
 import os
@@ -19,12 +19,15 @@ import json
 import secrets
 import numpy as np
 import webbrowser
+import base64
 #获取本地运行路径
 bin_dir = os.path.join(os.path.dirname(__file__),'bin')
 #点名文件目录
 
 name_file = os.getcwd() + r'/name.wow'
+name_pro = os.getcwd() + r'/name.pro'
 name_list = []
+name_password = ''
 counted_list = []
 config_file = os.getcwd() + r'/config.json'
 #判断启动模式
@@ -239,8 +242,104 @@ class SEEWO_Tools(): #SEEWO 用途相关工具（托盘工具、PPT检测[已弃
         mWindow.show()
         mWindow.showNormal()
     
+#新版名单逻辑
+class NewList():
+    def file_load(self): #用来读取本地的名单文件，返回类型json
+        
+        try: #尝试打开名单文件
+            with open(name_pro,mode='rb') as f:
+                file_data = f.read() #读入文件 
+                file_decode = base64.b64decode(file_data).decode('utf-8') #b64 解码 然后用utf-8解码
+                f.close() #关闭文件
+                #尝试读取数量，顺便确保是存在的
+                print('解码后文件',file_decode)
+                file_sss = json.loads(file_decode)
+                print(file_sss['num'])
 
 
+                return(json.loads(file_decode)) #返回文件内容(json转成字典)
+            print('打开成功')
+            
+        except Exception as q:#打开失败
+            print('打开失败',q)
+            with open(name_pro,mode='wb') as f:
+                #定义空文件内容
+                name_content = {
+                    'num':0,
+                    'password_exist':False
+                                }
+                file_data = json.dumps(name_content).encode('utf-8') #转换成json并准备bas64编码的bytes
+                file_encode = base64.b64encode(file_data)  #bas64 编码
+                f.write(file_encode) #写文件
+                f.close() #关闭文件
+                return(name_content) #返回文件内容(json转成字典)
+
+    def load(self): #用来载入读入的文件
+        global name_content
+        name_content = self.file_load()
+        print('读取到的文件内容',name_content)
+        global name_list
+        global name_password
+        name_list = [] #清空名单列表
+        if name_content['num'] > 0:
+            for i in range(0,name_content['num']):
+                name_list.append(name_content['student' + str(i)])
+        if name_content['password_exist']:
+            name_password = name_content['password']
+        if not name_content['password_exist']:
+            name_password = ''
+        print('读取到的密码',name_password)
+        try:
+           pass
+        except Exception as q:
+            print(q)
+
+            with open(name_pro,mode='wb') as f:
+                name_content = {
+                    'num':0,
+                    'password_exist':False
+                                }
+                f.write(base64.b64encode(json.dumps(name_content).encode('utf-8')))
+                f.close()
+            return False
+        global counted_list
+        counted_list = [] #清空点过列表
+        print('载入的名单',name_list)
+    
+    def save(self,name:list):
+        
+        name_content = self.file_load()
+        name_content['num'] = len(name)
+        print('新名字列表',name)
+        count = 0
+        for i in name:
+            name_content['student'+str(count)] = i
+            count = count + 1
+        with open(name_pro,mode='wb') as f:
+                f.write(base64.b64encode(json.dumps(name_content).encode('utf-8')))
+                f.close()
+        file_manager.load()
+
+        
+    def passwd(self,password:str,new_password:str):
+        if name_password == password:
+            file_content = self.file_load()
+            if new_password != '':
+                file_content['password_exist'] = True
+                file_content['password'] = new_password
+                print(file_content)
+            elif new_password == '':
+                file_content['password'] = ''
+                file_content['password_exist'] = False
+        
+            with open(name_pro,mode='wb') as f:
+                    wdnmd = json.dumps(file_content)
+                    print(wdnmd)
+                    f.write(base64.b64encode(wdnmd.encode('utf-8')))
+                    f.close()
+            return(True)
+        else:
+            return(False)
 
 
 class MainWindow(QMainWindow): #主功能实现窗口
@@ -278,6 +377,10 @@ class MainWindow(QMainWindow): #主功能实现窗口
         self.Start_button.setFont(font)
 
         self.name_label.setText('未选定')
+        
+        #设置FluentWindow 独立对象名
+        self.setObjectName('home')
+        
         #######
         
         self.refresh_status()
@@ -302,10 +405,7 @@ class MainWindow(QMainWindow): #主功能实现窗口
 
     def Open_File_button_do(self):
         print("打开文件按钮被按下")
-        if client_mode == False:
-            os.startfile(name_file)
-        else:
-            easygui.msgbox('您当前没有权限访问点名文件')
+        Flyout.create(icon=FIF.INFO,title='想要修改名单文件？',content='版本已更新，请转到左侧设置页面修改名单',target=self.Open_File_Button,parent=self,isClosable=True,aniType=FlyoutAnimationType.PULL_UP)
     def reset_button_do(self):
         print("重置按钮被按下")
         reset_App()
@@ -393,6 +493,93 @@ class about(QWidget):
     def __init__(self):
         super().__init__()
         uic.loadUi(bin_dir + '/about.ui',self) 
+        self.setObjectName('about')
+class settings(QWidget):
+    def loadtext(self):
+        for i in name_list:
+            text = self.name_text.toPlainText() + i + '\n'
+            self.name_text.setPlainText(text)
+    def Locked(self):
+        self.lock_status_label.setText('已锁定')
+        self.lock_status_label.setStyleSheet('color:red;font:bold 14px')
+        self.name_text.setReadOnly(True)
+        self.password_lineedit.setEnabled(True)
+        self.unlock_button.setText("解锁")
+        self.islock = True
+        self.saveButton.setEnabled(False)
+    def Unlocked(self):
+        self.lock_status_label.setText('已解锁')
+        self.lock_status_label.setStyleSheet('color:green;font:bold 14px')
+        self.name_text.setReadOnly(False)
+        self.password_lineedit.setEnabled(False)
+        self.unlock_button.setText("锁定")
+        self.islock = False
+        self.saveButton.setEnabled(True)
+        print('wdnmd')
+    def __init__(self):
+        super().__init__()
+        uic.loadUi(bin_dir + '/settings.ui',self) 
+        self.setObjectName('setttings')
+        
+        #查找对象
+        self.name_text = self.findChild(QTextEdit,'contentEdit')
+        self.unlock_button = self.findChild(QPushButton,'unlock_button')
+        self.password_lineedit = self.findChild(QLineEdit,'lineEdit')
+        self.change_password_button = self.findChild(QPushButton,'change_password_button')
+        self.lock_status_label = self.findChild(QLabel,'Lock_status')
+        self.saveButton = self.findChild(QPushButton,'SaveButton')
+        #连接信号和槽
+        self.unlock_button.clicked.connect(self.unlock_button_do)
+        self.change_password_button.clicked.connect(self.change_password_button_do)
+        self.saveButton.clicked.connect(self.save_button_do)
+
+        #加载文本
+        self.loadtext()
+
+
+        self.islock = True
+        #设置显示逻辑
+        file_content = file_manager.file_load()
+        if file_content['password_exist']:
+            self.Locked()
+        else:
+            self.Unlocked()
+    
+    def save_button_do(self):
+        print('保存按钮点击')
+        print('密码内容',self.password_lineedit.text())
+        text = self.name_text.toPlainText()
+        wow = list(filter(None,text.split('\n')))
+        
+        file_manager.save(wow)
+    def unlock_button_do(self):
+        print('解锁/锁定 按钮点击',self.islock)
+        a = False
+        if self.islock and self.password_lineedit.text() == name_password:
+            self.Unlocked()
+            a = True
+        elif self.islock and self.password_lineedit.text() != name_password:
+            Flyout.create(icon=FIF.CAFE,title='你干嘛~',content='密码错误',target=self.unlock_button,parent=self,isClosable=True,aniType=FlyoutAnimationType.DROP_DOWN)
+            a = True
+        elif self.islock == False and a == False:
+            self.Locked()
+    def change_password_button_do(self):
+        print('修改密码按钮点击')
+        oldpassword = easygui.passwordbox('请输入旧密码（没有就留空）')
+        if not oldpassword == name_password:
+            easygui.msgbox('旧密码错误')
+        if oldpassword == name_password:
+            new1 = easygui.passwordbox('请输入新密码')
+            new2 = easygui.passwordbox('请再次输入')
+            if new1 == new2:
+                if file_manager.passwd(oldpassword,new1):
+                    easygui.msgbox('修改成功')
+                else:
+                    easygui.msgbox('修改失败')
+            else:
+                easygui.msgbox('两次密码不一致，已取消修改')
+        file_manager.load()
+
 
 class WelcomeWindow(FluentWindow): #多合一窗口
     def __init__(self, parent=None):
@@ -408,10 +595,15 @@ class WelcomeWindow(FluentWindow): #多合一窗口
         self.homeInterface = MainWindow()
         self.addSubInterface(self.homeInterface,icon=FIF.HOME,text='随机点名',position=NavigationItemPosition.TOP)
 
-        #添加 about 作为子窗口
-        self.homeInterface = about()
-        self.addSubInterface(self.homeInterface,icon=FIF.INFO,text='关于',position=NavigationItemPosition.TOP)
+        #添加 Settings 作为子窗口
+        self.setInterface = settings()
+        self.addSubInterface(self.setInterface,icon=FIF.SETTING,text='设置',position=NavigationItemPosition.BOTTOM)
     
+        #添加 about 作为子窗口
+        self.aboutInterface = about()
+        self.addSubInterface(self.aboutInterface,icon=FIF.INFO,text='关于',position=NavigationItemPosition.BOTTOM)
+                
+        
         #标题栏定制
         self.titleBar.maxBtn.hide() #禁用最大化按钮
         self.titleBar.setDoubleClickEnabled(False) #禁用双击最大化
@@ -448,7 +640,7 @@ def checkfile(path): #检查文件是否存在，若存在，则返回真，否�
         mode = 'w+'
         return(False)
 
-def reset_App():
+def reset_App1(): #旧版文件读取
     global name_list
     global counted_list
     #读入点名文件
@@ -473,18 +665,23 @@ def reset_App():
     except Exception as q:
         print(q)
         easygui.msgbox('载入文件时遇到错误,'+q,title='Error!!!')
-    
+
+#新版文件读取
+def reset_App():
+    file_manager.load()
+
+
 
 if __name__ == "__main__":
-
+    file_manager = NewList()
     #检查所需文件是否存在
-    if not checkfile(name_file):
-        print('找不到点名文件，现在创建一个')
-        with open(name_file,mode='w+',encoding='utf-8') as f:
-            default_text = '#这是一个点名文件，它采用txt文件形式保存。  \n#像这样子，以“#” 开头的文本不会被当做姓名处理，如果您希望添加注释，也可以在注释的文本前添加“#” \n#请直接将姓名每行一个粘贴到下面的空白区域，请确保没有多余的空行!!!!!'
-            f.write(default_text)
-            f.close()
-    
+    #    if not checkfile(name_file):
+    #        print('找不到点名文件，现在创建一个')
+    #        with open(name_file,mode='w+',encoding='utf-8') as f:
+    #            default_text = '#这是一个点名文件，它采用txt文件形式保存。  \n#像这样子，以“#” 开头的文本不会被当做姓名处理，如果您希望添加注释，也可以在注释的文本前添加“#” \n#请直接将姓名每行一个粘贴到下面的空白区域，请确保没有多余的空行!!!!!'
+    #            f.write(default_text)
+    #            f.close()
+        
     #调用Reset_APP 方法重置应用程序
     reset_App()
     
