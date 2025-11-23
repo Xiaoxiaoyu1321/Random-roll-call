@@ -39,55 +39,74 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; font-weight:600;&quot;&gt;开发者：Xiaoxiaoyu1321&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="PushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>80</y>
-     <width>101</width>
-     <height>23</height>
+     <x>260</x>
+     <y>70</y>
+     <width>151</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>访问作者站点</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="PushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>80</y>
-     <width>181</width>
-     <height>23</height>
+     <x>420</x>
+     <y>70</y>
+     <width>221</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>访问随机点名项目地址</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="TextBrowser" name="textBrowser">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>120</y>
-     <width>721</width>
-     <height>341</height>
+     <width>731</width>
+     <height>351</height>
     </rect>
    </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
    </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;本项目使用PyQT5 和 PyQT-Fluent-Widgets 项目组件提供用户交互界面支持。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;本项目使用 Apache-2.0 协议在Github 上开源。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;这个软件的第一个版本发布于2024年11月3日。写这个软件的最大原因还是解决一直以来教学缺少合适和好用的本地的免登录的随机点名软件。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;最初开始做随机点名相关软件是在小学的时候，当初是使用的易语言开发的，只能实现一些不复杂的逻辑，而且说实话整体难度很低。这个项目也是我尝试将各个方面的技术整合在一起的最初实验产物，使用Python完成开发，因此我可以轻松实现一些更加复杂的逻辑。针对以往教学中观察到的问题，为此，我设计了一些相对实用的功能，例如“不重复点名”、“点名名单加密”。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;可以点上面的“访问作者站点”来看看我的个人站点，“访问随机点名项目地址”可以去本项目在Github 上开源的地址，可以检查和获取是否有新版本可用。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:16pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;本项目使用PyQT5 和 PyQT-Fluent-Widgets 项目组件提供用户交互界面支持。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;本项目使用 &lt;/span&gt;&lt;span style=&quot; font-family:'Monaspace Neon','ui-monospace','SFMono-Regular','SF Mono','Menlo','Consolas','Liberation Mono','monospace'; font-size:9pt; color:#1f2328; background-color:#ffffff;&quot;&gt; GNU GENERAL PUBLIC LICENSE 3.0&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;协议在Github 上开源。(我不想用这个协议，但因为库的遗传和合规性只能被动用这个）&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;这个软件的第一个版本发布于2024年11月3日。写这个软件的最大原因还是解决一直以来教学缺少合适和好用的本地的免登录的随机点名软件。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;最初开始做随机点名相关软件是在小学的时候，当初是使用的易语言开发的，只能实现一些不复杂的逻辑，而且说实话整体难度很低。这个项目也是我尝试将各个方面的技术整合在一起的最初实验产物，使用Python完成开发，因此我可以轻松实现一些更加复杂的逻辑。针对以往教学中观察到的问题，为此，我设计了一些相对实用的功能，例如“不重复点名”、“点名名单加密”。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;可以点上面的“访问作者站点”来看看我的个人站点，“访问随机点名项目地址”可以去本项目在Github 上开源的地址，可以检查和获取是否有新版本可用。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>TextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header location="global">qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

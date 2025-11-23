@@ -18,7 +18,7 @@ import easygui
 import json
 import secrets
 import numpy as np
-
+import webbrowser
 #获取本地运行路径
 bin_dir = os.path.join(os.path.dirname(__file__),'bin')
 #点名文件目录
@@ -252,7 +252,7 @@ class MainWindow(QMainWindow): #主功能实现窗口
         #设置/固定宽度
         self.setFixedSize(self.width(), self.height()) #固定宽度和高度
         self.setWindowIcon(QIcon(bin_dir + '/icon.ico'))
-
+        #self.setStyleSheet('background-color:white')
 
         #查找按钮对象
         self.Start_button = self.findChild(QPushButton,'Start_button')
@@ -416,14 +416,27 @@ class WelcomeWindow(FluentWindow): #多合一窗口
         self.titleBar.maxBtn.hide() #禁用最大化按钮
         self.titleBar.setDoubleClickEnabled(False) #禁用双击最大化
         self.setWindowTitle('随机点名')
+        
+        #查找按钮对象
+        self.author_button = self.findChild(QPushButton,'pushButton')
+        self.software_info_button = self.findChild(QPushButton,'pushButton_2')
+
+        #连接按钮
+        self.author_button.clicked.connect(self.author_button_do)
+        self.software_info_button.clicked.connect(self.software_info_button_do)
+
+
+        
     def closeEvent(self, a0): #处理关闭信号
         print('退出按钮被按下')
         #保存信息
         mWindow.hide()
         SEEWO_Tool.showMessage('窗口已最小化到托盘')
         a0.ignore()
-    
-
+    def author_button_do(self):
+        webbrowser.open('https://github.com/Xiaoxiaoyu1321')
+    def software_info_button_do(self):
+        webbrowser.open('https://github.com/Xiaoxiaoyu1321/Random-roll-call')
 
 def checkfile(path): #检查文件是否存在，若存在，则返回真，否则返回否
     global mode
