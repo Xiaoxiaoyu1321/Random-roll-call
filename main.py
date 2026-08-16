@@ -4,7 +4,7 @@ from PIL import Image
 from PyQt5 import QtWidgets, uic,QtCore
 from PyQt5.QtGui import QFont ,QIcon, QPainter, QColor, QBrush, QPen,QPixmap
 from PyQt5.QtCore import  Qt, QRect, QPoint, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,QMainWindow,QMessageBox,QFrame,QHBoxLayout,QTextEdit,QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,QMainWindow,QMessageBox,QFrame,QHBoxLayout,QTextEdit,QLineEdit,QTableWidget,QTableWidgetItem,QHeaderView
 from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, setFont,Flyout,FlyoutAnimationType
 from qfluentwidgets import FluentIcon as FIF
 import sys
@@ -325,6 +325,24 @@ class NewList():
         else:
             return(False)
 
+    def add_stat(self, name, delta=1):
+        """记录某人被点名次数并持久化(只改 stats 字段,不动名单本体)"""
+        try:
+            file_content = self.file_load()
+            stats = file_content.get('stats', {})
+            stats[name] = stats.get(name, 0) + delta
+            file_content['stats'] = stats
+            with open(name_pro, mode='wb') as f:
+                f.write(base64.b64encode(json.dumps(file_content).encode('utf-8')))
+                f.close()
+        except Exception as q:
+            print('统计保存失败', q)
+
+    def get_stats(self):
+        """返回 {姓名: 被点次数} 字典"""
+        file_content = self.file_load()
+        return file_content.get('stats', {})
+
 
 class ChooseWorker(QThread):
     """后台抽选线程:在非 GUI 线程执行抽取逻辑,通过信号把结果送回主线程,
@@ -372,6 +390,12 @@ def get_list_new():
         name_list.pop(idx)
         counted_list.append(chosen)
     except ValueError:
+        pass
+
+    #持久化统计:记录被点次数(与名单一起存于 name.pro,保留历史累计)
+    try:
+        file_manager.add_stat(chosen)
+    except Exception:
         pass
 
     print('抽到的', chosen)
@@ -582,6 +606,49 @@ class settings(QWidget):
         file_manager.load()
 
 
+class StatisticsPage(QWidget): #点名统计页面
+    def __init__(self):
+        super().__init__()
+        self.setObjectName('statistics')
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(12)
+
+        title = SubtitleLabel('点名统计')
+        layout.addWidget(title)
+
+        hint = QLabel('统计每位同学被点名的次数，数据持久化保存于名单文件中')
+        hint.setWordWrap(True)
+        layout.addWidget(hint)
+
+        #统计表格:姓名 / 被点次数
+        self.table = QTableWidget()
+        self.table.setColumnCount(2)
+        self.table.setHorizontalHeaderLabels(['姓名', '被点次数'])
+        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.setAlternatingRowColors(True)
+        layout.addWidget(self.table)
+
+        self.refresh_button = QPushButton('刷新统计')
+        self.refresh_button.clicked.connect(self.load_stats)
+        layout.addWidget(self.refresh_button)
+
+        #首次加载
+        self.load_stats()
+
+    def load_stats(self):
+        """从 name.pro 读取统计并刷新表格,按次数降序排列"""
+        stats = file_manager.get_stats()
+        items = sorted(stats.items(), key=lambda x: -x[1])
+        self.table.setRowCount(len(items))
+        for row, (name, count) in enumerate(items):
+            self.table.setItem(row, 0, QTableWidgetItem(name))
+            self.table.setItem(row, 1, QTableWidgetItem(str(count)))
+
+
 class WelcomeWindow(FluentWindow): #多合一窗口
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -603,6 +670,10 @@ class WelcomeWindow(FluentWindow): #多合一窗口
         #添加 about 作为子窗口
         self.aboutInterface = about()
         self.addSubInterface(self.aboutInterface,icon=FIF.INFO,text='关于',position=NavigationItemPosition.BOTTOM)
+
+        #添加 统计 作为子窗口
+        self.statisticsInterface = StatisticsPage()
+        self.addSubInterface(self.statisticsInterface,icon=FIF.HISTORY,text='统计',position=NavigationItemPosition.BOTTOM)
                 
         
         #标题栏定制

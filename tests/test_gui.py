@@ -62,6 +62,9 @@ class GuiSmokeTest(unittest.TestCase):
         main.counted_list = []
         main.name_password = ''
         main.quiet_boot = False
+        # 每个测试使用独立的数据文件,避免统计/名单互相污染
+        main.name_pro = os.path.join(tempfile.mkdtemp(), 'name.pro')
+        main.file_manager = main.NewList()
 
     def tearDown(self):
         # 结束残留的 worker 线程
@@ -123,6 +126,23 @@ class GuiSmokeTest(unittest.TestCase):
         main.name_list = []
         win.StartButton_do()
         self.assertEqual(win.name_label.text(), '文件为空')
+
+    def test_statistics_page(self):
+        """统计页面:构造正常、表格显示持久化的数据"""
+        main.file_manager.add_stat('张三')
+        main.file_manager.add_stat('张三')
+        main.file_manager.add_stat('李四')
+        main.mWindow = main.WelcomeWindow()
+        page = main.mWindow.statisticsInterface
+        self.assertIsNotNone(page)
+        # 构造时已加载:两行数据(张三 2 次、李四 1 次),按次数降序
+        self.assertEqual(page.table.rowCount(), 2)
+        self.assertEqual(page.table.item(0, 0).text(), '张三')
+        self.assertEqual(page.table.item(0, 1).text(), '2')
+        self.assertEqual(page.table.item(1, 0).text(), '李四')
+        # 刷新按钮可用
+        page.refresh_button.click()
+        self.assertEqual(page.table.rowCount(), 2)
 
     def test_floating_ball_click_opens_window(self):
         """短按(<0.5s)视为点击,应打开主窗口"""
