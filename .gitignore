@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# PyInstaller 构建产物
+build/
+*.spec
+.pyinstaller-cache/
+dist/main
+dist/main.app
+
+# 运行时数据文件(程序自动生成)
+config.json
+name.pro
+name.pro.bak
+name.wow
+
+# 系统
+.DS_Store
