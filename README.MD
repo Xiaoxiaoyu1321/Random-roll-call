@@ -8,6 +8,8 @@
    
 它具有一个悬浮球，便于您在任何软件运行时快速开启随机点名窗口。 
 
+使用DeepSeek 协助开发
+
 #### 软件界面
 ![image](/image/p1.png)
 
@@ -19,7 +21,7 @@
 
 
 ### 安装要求
-**操作系统**： Windows 7 Services Pack 1 或更新版本   
+**操作系统**： Windows 7 Service Pack 1 或更新版本   
 **磁盘空间**：最少 80MB 的空间
 
 ### 基础功能（计划）
@@ -39,6 +41,16 @@
 - [x] 防止多开
 
 
+### 编译
+本项目的 Windows 与 macOS 版本通过 GitHub Actions 自动编译：
+
+1. 前往仓库 **Actions** 页面
+2. 选择 **Build** 工作流
+3. 点击 **Run workflow** 手动触发
+4. 构建完成后，在对应 job 的 **Artifacts** 中下载产物
+
+- **Windows**：Python 3.9（最后一个官方支持 Windows 7 的版本）+ PyQt5 5.15，产物为 `main.exe`
+- **macOS**：Python 3.9，产物为单文件可执行程序
+
 #### 附件-启动参数
     `-quiet`  静默启动
- 

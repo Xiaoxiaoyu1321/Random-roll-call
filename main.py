@@ -11,7 +11,6 @@ import sys
 import os
 import random
 import time
-import _thread
 import pygetwindow as gw
 import psutil
 import easygui
@@ -20,81 +19,72 @@ import secrets
 import numpy as np
 import webbrowser
 import base64
+
+# PyInstaller -w(无控制台)打包后 sys.stdout/stderr 为 None,
+# 裸 print 会抛 AttributeError 导致程序崩溃;这里重定向到空设备保护
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, 'w', encoding='utf-8')
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, 'w', encoding='utf-8')
 #获取本地运行路径
 bin_dir = os.path.join(os.path.dirname(__file__),'bin')
 #点名文件目录
+#数据文件(名单/配置)固定放在程序所在目录,避免因启动目录不同而漂移
+if getattr(sys, 'frozen', False):
+    base_dir = os.path.dirname(sys.executable)  # PyInstaller 打包后:exe 所在目录
+else:
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # 开发时:脚本所在目录
 
-name_file = os.getcwd() + r'/name.wow'
-name_pro = os.getcwd() + r'/name.pro'
+name_file = os.path.join(base_dir, 'name.wow')
+name_pro = os.path.join(base_dir, 'name.pro')
+config_file = os.path.join(base_dir, 'config.json')
 name_list = []
 name_password = ''
 counted_list = []
-config_file = os.getcwd() + r'/config.json'
 #判断启动模式
 quiet_boot = False
-client_mode = False
 
 try:
     for i in sys.argv:
         if i == "-quiet":
             quiet_boot = True
-        if i == "-client":
-            client_mode = True
-
-except:
+except Exception:
     quiet_boot = False
-    client_mode = False
 
-#检查文件是否存在，若存在，则返回真，否则返回否
-def checkfile(path): 
-    global mode
+#检查文件是否存在
+def checkfile(path):
+    return os.path.exists(path)
 
-    if os.path.exists(path):
-        mode  = 'r'
-        return(True)
-    else:
-        mode = 'w+'
-        return(False)
-
-#自己配置文件实现
+#自己配置文件实现(多开检测:比较 PID 所属进程名,避免 PID 复用导致的误报)
 try:
     if checkfile(config_file):
-        with open(config_file,mode='r',encoding='utf-8') as f:
-            config_content = f.read()
-        config = json.loads(config_content)
+        with open(config_file, mode='r', encoding='utf-8') as f:
+            config = json.loads(f.read())
 
-        last_pid = config['last_pid']
+        last_pid = int(config['last_pid'])
+        duplicate = False
+        if last_pid != os.getpid() and psutil.pid_exists(last_pid):
+            try:
+                #仅当 PID 对应的是同名程序时才认为是重复实例
+                duplicate = (psutil.Process(last_pid).name().lower()
+                             == psutil.Process().name().lower())
+            except psutil.NoSuchProcess:
+                duplicate = False
 
-        if psutil.pid_exists(int(last_pid)):
-            easygui.msgbox('检测到已有开启的实例，PID：'+str(last_pid)+'，\n程序即将退出','随机点名-不能重复启动实例','退出')
+        if duplicate:
+            easygui.msgbox('检测到已有开启的实例，PID：' + str(last_pid) + '，\n程序即将退出', '随机点名-不能重复启动实例', '退出')
             os._exit(0)
-        else:
-            config['last_pid'] = os.getpid()
-            with open(config_file,mode='w',encoding='utf-8') as f:
-                f.write(json.dumps(config))
-                f.close()
 
-    else:
-        #获取当前的PID：
-        now_pid = os.getpid()
-        with open(config_file,mode='w',encoding='utf-8') as f:
-            config = {
-                'last_pid' : now_pid
-            }
+        config['last_pid'] = os.getpid()
+        with open(config_file, mode='w', encoding='utf-8') as f:
             f.write(json.dumps(config))
-            f.close()
+    else:
+        with open(config_file, mode='w', encoding='utf-8') as f:
+            f.write(json.dumps({'last_pid': os.getpid()}))
 except Exception as q:
     print(q)
 #基础变量
-click_time = 0 #按下时间计时器
-click_status = False  #按下状态计时器
-#中央计时器
-def main_time_remainder():
-    global click_time
-    while True:
-        if click_status:
-            click_time = click_time + 1
-        time.sleep(0.4)
+press_time = 0.0 #悬浮球按下时间戳(用于区分点击与拖动)
 
 
 # 创建高质量随机数生成器实例
@@ -178,36 +168,31 @@ class FloatingBall(QMainWindow):  #浮动球
 
 
     def mousePressEvent(self, event):
-        global click_status
+        global press_time
 
         if event.button() == Qt.LeftButton:
-
-            click_status = True
+            press_time = time.monotonic()
             self.mouse_press_position = event.globalPos() - self.frameGeometry().topLeft()
 
 
     def mouseMoveEvent(self, event):
 
 
-        if Qt.LeftButton and self.mouse_press_position:
+        if (event.buttons() & Qt.LeftButton) and self.mouse_press_position:
 
 
             self.move(event.globalPos() - self.mouse_press_position)
 
 
     def mouseReleaseEvent(self, event):
-        global click_status
-        global click_time
-        click_status = False
-        print(click_time)
-        if click_time <= 0.5:
+        global press_time
+        #按下时间不超过 0.5 秒视为"点击",否则视为"拖动",拖动后不弹窗
+        if time.monotonic() - press_time <= 0.5:
             print("开启窗口")
             #！！！！开启窗口
             mWindow.hide()
             mWindow.show()
-            mWindow.showNormal() 
-
-        click_time = 0
+            mWindow.showNormal()
 
         self.mouse_press_position = None
 
@@ -222,21 +207,25 @@ class SEEWO_Tools(): #SEEWO 用途相关工具（托盘工具、PPT检测[已弃
         MenuItem('退出程序',lambda:self.exitProgram())
         )
 
-        self.icon.icon = Image.open(bin_dir + '/icon.ico')
+        self.icon.icon = Image.open(os.path.join(bin_dir, 'icon.ico'))
 
         self.icon.menu = menu
-        self.icon.run()
+        # run_detached 在独立线程运行托盘消息循环,避免阻塞主线程的 Qt 事件循环(Windows 支持)
+        try:
+            self.icon.run_detached()
+        except Exception as e:
+            # 个别平台(如 macOS 开发环境)不支持 run_detached,托盘不可用但不影响主程序
+            print('托盘图标启动失败(不影响主程序):', e)
     def showMessage(self,messages,titles='随机点名'):
         self.icon.notify(title=titles,message=messages)
     def exitProgram(self):
         global app
         app.quit()
-
-        self.icon.stop()
-        #sys.exit()
+        try:
+            self.icon.stop()
+        except Exception:
+            pass
         os._exit(0)
-        global EXITSTATUS
-        EXITSTATUS = True
     def showWindow(self):
         mWindow.hide()
         mWindow.show()
@@ -250,18 +239,21 @@ class NewList():
             with open(name_pro,mode='rb') as f:
                 file_data = f.read() #读入文件 
                 file_decode = base64.b64decode(file_data).decode('utf-8') #b64 解码 然后用utf-8解码
-                f.close() #关闭文件
                 #尝试读取数量，顺便确保是存在的
                 print('解码后文件',file_decode)
                 file_sss = json.loads(file_decode)
                 print(file_sss['num'])
 
-
                 return(json.loads(file_decode)) #返回文件内容(json转成字典)
-            print('打开成功')
             
         except Exception as q:#打开失败
             print('打开失败',q)
+            #先备份损坏文件，避免名单被静默清空
+            try:
+                if os.path.exists(name_pro):
+                    os.rename(name_pro, name_pro + '.bak')
+            except Exception:
+                pass
             with open(name_pro,mode='wb') as f:
                 #定义空文件内容
                 name_content = {
@@ -283,25 +275,14 @@ class NewList():
         name_list = [] #清空名单列表
         if name_content['num'] > 0:
             for i in range(0,name_content['num']):
-                name_list.append(name_content['student' + str(i)])
+                key = 'student' + str(i)
+                if key in name_content: #防御:键缺失时跳过,避免 KeyError 崩溃
+                    name_list.append(name_content[key])
         if name_content['password_exist']:
             name_password = name_content['password']
-        if not name_content['password_exist']:
+        else:
             name_password = ''
         print('读取到的密码',name_password)
-        try:
-           pass
-        except Exception as q:
-            print(q)
-
-            with open(name_pro,mode='wb') as f:
-                name_content = {
-                    'num':0,
-                    'password_exist':False
-                                }
-                f.write(base64.b64encode(json.dumps(name_content).encode('utf-8')))
-                f.close()
-            return False
         global counted_list
         counted_list = [] #清空点过列表
         print('载入的名单',name_list)
@@ -309,6 +290,9 @@ class NewList():
     def save(self,name:list):
         
         name_content = self.file_load()
+        #清理旧的 student 键,避免残留脏数据
+        for key in [k for k in name_content.keys() if k.startswith('student')]:
+            del name_content[key]
         name_content['num'] = len(name)
         print('新名字列表',name)
         count = 0
@@ -340,6 +324,60 @@ class NewList():
             return(True)
         else:
             return(False)
+
+
+class ChooseWorker(QThread):
+    """后台抽选线程:在非 GUI 线程执行抽取逻辑,通过信号把结果送回主线程,
+    避免跨线程直接操作 Qt 控件(原实现直接跨线程 setText,会导致崩溃/未定义行为)"""
+    name_ready = pyqtSignal(str)  #滚动显示的名字
+    done = pyqtSignal()           #抽选完成
+
+    def run(self):
+        try:
+            ok = get_list_new()
+            for i in ok:
+                self.name_ready.emit(i.replace('\n', '').replace('\r', ''))
+                time.sleep(0.1)
+        finally:
+            #无论是否异常都通知主线程恢复按钮,避免按钮永久禁用
+            self.done.emit()
+
+
+def get_list_new():
+    """取得新的列表:洗牌后滚动展示候选,最后落点即被抽中者(标记为已点)。
+    无论名单人数多少,都会真实消耗 1 人,保证"不重复点名"始终生效"""
+    global name_list
+    global counted_list
+
+    if not name_list:
+        return []
+
+    shuffled = advanced_shuffle(name_list)  #洗牌(新列表,不改动 name_list)
+    need_count_num = random.randint(13, 17)
+
+    #候选滚动序列:人数足够取前 N 个,不足则全部滚动展示
+    if len(shuffled) >= need_count_num:
+        display = shuffled[:need_count_num]
+    else:
+        display = shuffled
+
+    #从滚动序列中随机选一个作为最终落点(追加到末尾,滚动最后停在这里)
+    pianyi = random.randint(0, len(display) - 1)
+    chosen = display[pianyi]
+    display.append(chosen)
+
+    #标记已点:从剩余名单中移除一个匹配项(用索引删除,语义明确)
+    try:
+        idx = name_list.index(chosen)
+        name_list.pop(idx)
+        counted_list.append(chosen)
+    except ValueError:
+        pass
+
+    print('抽到的', chosen)
+    print('抽过的', counted_list)
+    print('没抽的', name_list)
+    return display
 
 
 class MainWindow(QMainWindow): #主功能实现窗口
@@ -385,23 +423,23 @@ class MainWindow(QMainWindow): #主功能实现窗口
         
         self.refresh_status()
         
-        if quiet_boot:
-            mWindow.hide()
         
 
-        
-        
 
     def StartButton_do(self):
         print('开始按钮被按下')
         if len(name_list) == 0:
             self.name_label.setText("文件为空")
         else:
-            #禁用按钮
+            #禁用按钮，避免抽选期间重复点击或重置造成的并发修改
             self.Start_button.setEnabled(False)
             self.Start_button.setText('正在抽取……')
+            self.Reset_button.setEnabled(False)
 
-            _thread.start_new_thread(self.choose_and_set_label,())
+            self.worker = ChooseWorker()
+            self.worker.name_ready.connect(self.name_label.setText)
+            self.worker.done.connect(self.on_choose_done)
+            self.worker.start()
 
     def Open_File_button_do(self):
         print("打开文件按钮被按下")
@@ -412,29 +450,18 @@ class MainWindow(QMainWindow): #主功能实现窗口
         self.refresh_status()
         self.name_label.setText('未选定')
     
-    def choose_and_set_label(self):
-        #禁用按钮
-        self.Start_button.setEnabled(False)
-        self.Start_button.setText('正在抽取……')
-
-        #开始抽取
-        ok = self.get_list_new() #获取列表
-        for i in ok:
-            self.name_label.setText(i.replace('\n','').replace('\r',''))
-            time.sleep(0.1)
-        
-        #启用按钮
-        
+    def on_choose_done(self):
+        #抽选结束,恢复按钮(通过信号在主线程执行)
         self.Start_button.setEnabled(True)
         self.Start_button.setText('开始')
-        
-        #刷新显示
+        self.Reset_button.setEnabled(True)
         print('开始刷新显示')
         self.refresh_status()
-        print('线程应当退出')
     def get_old(self): #旧的函数，用不到，但是还是想留着
         global name_list
         global counted_list
+        if not name_list:
+            return
         t = 0 
         while t <= 15:
             ok = random.randint(0,len(name_list)-1)
@@ -445,33 +472,6 @@ class MainWindow(QMainWindow): #主功能实现窗口
         #移动最后的学生到点过列表:
         counted_list.append(name_list[ok])
         del name_list[ok]
-    def get_list_new(self):#取得新的列表
-        global name_list
-        global counted_list
-        
-        #random.shuffle(name_list)
-        name_list = advanced_shuffle(name_list)
-        final_list = []
-        need_count_num = random.randint(13,17)
-        if len(name_list) >= need_count_num:
-            print('人数大于',need_count_num,'，抽选')
-            for i in range(0,need_count_num):
-                final_list.append(name_list[i])
-                
-            print('结果',final_list)
-            print('未偏移结果：',final_list[len(final_list)-1])
-            pianyi = random.randint(0,len(final_list)-1)
-            final_list.append(final_list[pianyi])
-            print('偏移量：',pianyi,'偏移后结果：',final_list[len(final_list)-1])
-            counted_list.append(final_list[len(final_list)-1])
-            name_list.remove(final_list[len(final_list)-1])
-            print('抽到的',final_list[len(final_list)-1])
-            print('抽过的',counted_list)
-            print('没抽的',name_list)
-            return(final_list)
-        else:
-            print('人数小于',need_count_num,'，直接返回')
-            return(name_list)
     def closeEvent(self, a0): #处理关闭信号
         print('退出按钮被按下')
         #保存信息
@@ -515,11 +515,10 @@ class settings(QWidget):
         self.unlock_button.setText("锁定")
         self.islock = False
         self.saveButton.setEnabled(True)
-        print('wdnmd')
     def __init__(self):
         super().__init__()
         uic.loadUi(bin_dir + '/settings.ui',self) 
-        self.setObjectName('setttings')
+        self.setObjectName('settings')
         
         #查找对象
         self.name_text = self.findChild(QTextEdit,'contentEdit')
@@ -554,30 +553,32 @@ class settings(QWidget):
         file_manager.save(wow)
     def unlock_button_do(self):
         print('解锁/锁定 按钮点击',self.islock)
-        a = False
-        if self.islock and self.password_lineedit.text() == name_password:
-            self.Unlocked()
-            a = True
-        elif self.islock and self.password_lineedit.text() != name_password:
-            Flyout.create(icon=FIF.CAFE,title='你干嘛~',content='密码错误',target=self.unlock_button,parent=self,isClosable=True,aniType=FlyoutAnimationType.DROP_DOWN)
-            a = True
-        elif self.islock == False and a == False:
+        if self.islock:
+            if self.password_lineedit.text() == name_password:
+                self.Unlocked()
+            else:
+                Flyout.create(icon=FIF.CAFE,title='你干嘛~',content='密码错误',target=self.unlock_button,parent=self,isClosable=True,aniType=FlyoutAnimationType.DROP_DOWN)
+        else:
             self.Locked()
     def change_password_button_do(self):
         print('修改密码按钮点击')
         oldpassword = easygui.passwordbox('请输入旧密码（没有就留空）')
-        if not oldpassword == name_password:
+        if oldpassword != name_password:
             easygui.msgbox('旧密码错误')
-        if oldpassword == name_password:
-            new1 = easygui.passwordbox('请输入新密码')
-            new2 = easygui.passwordbox('请再次输入')
-            if new1 == new2:
-                if file_manager.passwd(oldpassword,new1):
-                    easygui.msgbox('修改成功')
-                else:
-                    easygui.msgbox('修改失败')
-            else:
-                easygui.msgbox('两次密码不一致，已取消修改')
+            return
+        new1 = easygui.passwordbox('请输入新密码')
+        new2 = easygui.passwordbox('请再次输入')
+        if new1 != new2:
+            easygui.msgbox('两次密码不一致，已取消修改')
+            return
+        if new1 == '':
+            #留空表示清除密码保护,需要二次确认,避免误操作
+            if not easygui.ccbox('新密码为空，将清除密码保护，是否继续？'):
+                return
+        if file_manager.passwd(oldpassword,new1):
+            easygui.msgbox('修改成功')
+        else:
+            easygui.msgbox('修改失败')
         file_manager.load()
 
 
@@ -630,16 +631,6 @@ class WelcomeWindow(FluentWindow): #多合一窗口
     def software_info_button_do(self):
         webbrowser.open('https://github.com/Xiaoxiaoyu1321/Random-roll-call')
 
-def checkfile(path): #检查文件是否存在，若存在，则返回真，否则返回否
-    global mode
-
-    if os.path.exists(path):
-        mode  = 'r'
-        return(True)
-    else:
-        mode = 'w+'
-        return(False)
-
 def reset_App1(): #旧版文件读取
     global name_list
     global counted_list
@@ -688,8 +679,6 @@ if __name__ == "__main__":
    
     
     
-    #启动主计时器
-    #_thread.start_new_thread(main_time_remainder,())
     
     
 
