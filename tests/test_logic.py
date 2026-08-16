@@ -89,6 +89,9 @@ class GetListNewTest(unittest.TestCase):
     def setUp(self):
         main.name_list = []
         main.counted_list = []
+        self.tmp = tempfile.mkdtemp()
+        main.name_pro = os.path.join(self.tmp, 'name.pro')
+        main.file_manager = main.NewList()
 
     def test_large_roster_consumes_one(self):
         main.name_list = ['学生%d' % i for i in range(30)]
@@ -130,6 +133,45 @@ class GetListNewTest(unittest.TestCase):
         self.assertEqual(len(set(drawn)), 10)
         self.assertEqual(main.name_list, [])
         self.assertEqual(len(main.counted_list), 10)
+
+
+class StatsTest(unittest.TestCase):
+    """点名统计的持久化逻辑"""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        main.name_pro = os.path.join(self.tmp, 'name.pro')
+        main.file_manager = main.NewList()
+
+    def test_add_stat_persists(self):
+        main.file_manager.add_stat('张三')
+        main.file_manager.add_stat('张三')
+        main.file_manager.add_stat('李四')
+        stats = main.file_manager.get_stats()
+        self.assertEqual(stats['张三'], 2)
+        self.assertEqual(stats['李四'], 1)
+        # 确认已写入文件(持久化)
+        content = main.file_manager.file_load()
+        self.assertEqual(content['stats']['张三'], 2)
+
+    def test_save_keeps_stats(self):
+        """重置名单(保存)后统计历史应保留"""
+        main.file_manager.add_stat('张三')
+        main.file_manager.save(['张三', '李四'])
+        stats = main.file_manager.get_stats()
+        self.assertEqual(stats['张三'], 1)
+
+    def test_draw_updates_stat(self):
+        """抽选后被点中的人统计 +1"""
+        main.name_list = ['学生%d' % i for i in range(30)]
+        main.counted_list = []
+        main.get_list_new()
+        chosen = main.counted_list[-1]
+        stats = main.file_manager.get_stats()
+        self.assertEqual(stats.get(chosen, 0), 1)
+
+    def test_get_stats_empty(self):
+        self.assertEqual(main.file_manager.get_stats(), {})
 
 
 class MiscTest(unittest.TestCase):

@@ -1,0 +1,8 @@
+PyQt5>=5.15
+pystray>=0.19
+Pillow>=9
+PyQt-Fluent-Widgets>=1.0
+pygetwindow>=0.0.9
+psutil>=5.9
+easygui>=0.98
+numpy>=1.21
